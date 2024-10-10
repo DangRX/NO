@@ -2,7 +2,6 @@
 
 ตัวอย่างโค้ดที่ใช้ไมโครคอนโทรลเลอร์ **Arduino** และเซ็นเซอร์ FSR เพื่อตรวจวัดแรงกัด:
 
-```cpp
 // Define the pin for FSR sensor
 const int FSR_PIN = A0;  // Analog pin for FSR
 int fsrReading;          // Variable to store FSR reading
