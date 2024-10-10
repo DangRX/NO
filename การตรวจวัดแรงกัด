@@ -1,0 +1,50 @@
+การตรวจวัดแรงกัดเพื่อประเมินสุขภาพของสัตว์เลี้ยงสามารถทำได้ด้วยการใช้เซ็นเซอร์วัดแรง (force sensor) เช่น **Force Sensitive Resistor (FSR)** หรือ **Load Cell** เพื่อรับแรงกัดแล้วแปลงเป็นค่าที่สามารถวิเคราะห์ได้ จากนั้นสามารถนำค่าดังกล่าวไปใช้ประเมินพฤติกรรมหรือสุขภาพของสัตว์เลี้ยง
+
+ตัวอย่างโค้ดที่ใช้ไมโครคอนโทรลเลอร์ **Arduino** และเซ็นเซอร์ FSR เพื่อตรวจวัดแรงกัด:
+
+```cpp
+// Define the pin for FSR sensor
+const int FSR_PIN = A0;  // Analog pin for FSR
+int fsrReading;          // Variable to store FSR reading
+float force;             // Variable to store calculated force
+
+void setup() {
+  Serial.begin(9600);    // Initialize serial communication
+  pinMode(FSR_PIN, INPUT);  // Set FSR_PIN as input
+}
+
+void loop() {
+  // Read the analog value from FSR
+  fsrReading = analogRead(FSR_PIN);
+
+  // Convert the reading to a force value (example conversion, adjust based on sensor calibration)
+  if (fsrReading > 0) {
+    force = fsrReading * 0.5;  // Adjust conversion factor based on sensor specs
+  } else {
+    force = 0;
+  }
+
+  // Print the force value to Serial Monitor
+  Serial.print("Force (N): ");
+  Serial.println(force);
+
+  // Add health check logic based on force value
+  if (force > 50) {  // Example threshold for strong bite
+    Serial.println("Warning: Strong bite detected. Check pet's health.");
+  } else if (force < 10 && force > 0) {  // Example threshold for weak bite
+    Serial.println("Weak bite detected. Check for dental issues.");
+  }
+
+  delay(500);  // Delay for readability
+}
+```
+
+### อธิบายโค้ด:
+1. **FSR_PIN**: กำหนดพินอนาล็อกที่เชื่อมต่อกับเซ็นเซอร์ FSR
+2. **fsrReading**: ค่าที่อ่านจากเซ็นเซอร์ FSR
+3. **force**: ค่าของแรงกัดที่ถูกคำนวณจากการอ่านค่าของ FSR
+4. โค้ดนี้จะแปลงค่าจากเซ็นเซอร์เป็นแรง (หน่วยนิวตัน) และทำการตรวจเช็คว่าค่าแรงกัดนั้นอยู่ในระดับที่อาจบ่งบอกถึงปัญหาสุขภาพของสัตว์เลี้ยงหรือไม่ เช่น กัดแรงเกินไปหรืออ่อนเกินไป
+
+### การปรับแต่ง:
+- การคำนวณแรงกัดอาจต้องการการปรับเปลี่ยนตามข้อมูลการสอบเทียบของเซ็นเซอร์ที่ใช้ (แรงต่อต้านและแรงดันที่เซ็นเซอร์รับได้)
+- สามารถเพิ่มฟังก์ชันอื่น ๆ เช่นการบันทึกข้อมูลลงใน **SD card** หรือส่งข้อมูลไปยังแอปพลิเคชันบนมือถือผ่าน **Bluetooth** เพื่อการติดตามพฤติกรรมระยะยาว
